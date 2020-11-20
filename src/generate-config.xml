@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <properties resource="database.properties" />
+    <!-- java驱动包  在本例中在同一目录，使用相对目录，具体使用时可以使用绝对路径-->
+    <classPathEntry location="libs/mysql-connector-java-8.0.22.jar" />
+    <context id="default" targetRuntime="MyBatis3">
+        <!-- 生成注释 -->
+        <commentGenerator>
+            <!--去除注释  选择true时去除注释，当值为false时自动生成注释-->
+            <property name="suppressAllComments" value="true" />
+            <!--注释中去除日期注释 -->
+            <property name="suppressDate" value="true" />
+            <!--注释中添加数据库字段备注注释 -->
+            <property name="addRemarkComments" value="true" />
+        </commentGenerator>
+        <!-- 配置数据库连接，加入属性写在url串里，与普通url语句略有不同，本次连接本地的blog数据库，根据情况自行修改 -->
+        <jdbcConnection driverClass="${jdbc.driver-class-name}"
+                        connectionURL="${jdbc.url}"
+                        userId="${jdbc.username}"
+                        password="${jdbc.password}">
+            <!-- MySQL8默认启用 SSL ,不关闭会有警告 -->
+            <property name="useSSL" value="true" />
+            <!--MySQL 不支持 schema 或者 catalog 所以需要添加这个 -->
+            <!--参考 : http://www.mybatis.org/generator/usage/mysql.html -->
+            <property name="nullCatalogMeansCurrent" value="true" />
+        </jdbcConnection>
+        <!-- 默认false，把JDBC DECIMAL 和 NUMERIC 类型解析为 Integer，为 true时把JDBC DECIMAL
+            和 NUMERIC 类型解析为java.math.BigDecimal -->
+        <javaTypeResolver>
+            <property name="forceBigDecimals" value="false" />
+        </javaTypeResolver>
+
+        <!-- Model模型生成器  就是普通意义上的model  两个路径下面详解-->
+        <javaModelGenerator
+                targetPackage="${generate.package}.pojo" targetProject="src">
+            <!-- 对char的数据是否进行trim -->
+            <property name="trimStrings" value="false" />
+            <!-- 是否有构造函数 -->
+            <property name="constructorBased" value="false" />
+            <property name="enableSubPackages" value="true" />
+        </javaModelGenerator>
+
+        <!-- 生成mapper映射文件  xml文件-->
+        <sqlMapGenerator targetPackage="${generate.package}.mapper" targetProject="src">
+            <property name="enableSubPackages" value="true" />
+        </sqlMapGenerator>
+
+        <!-- 代码 -->
+        <javaClientGenerator type="XMLMAPPER" targetPackage="${generate.package}.mapper" targetProject="src">
+            <property name="enableSubPackages" value="true" />
+        </javaClientGenerator>
+        <!--各个表的数据 tableName为数据中表名，domainObjectName为在java文件的表名-->
+        <table tableName="${generate.table-name}"
+               enableCountByExample="true"
+               enableUpdateByExample="true"
+               enableDeleteByExample="true"
+               enableSelectByExample="true"
+               selectByExampleQueryId="false" />
+    </context>
+</generatorConfiguration>
